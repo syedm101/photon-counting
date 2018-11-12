@@ -1,0 +1,9 @@
+# filename  
+dataSet = "2018.10.29_18.57.37_1"
+zero_level = 8040
+photon_ranges = [170, 170] # 2peak min, 3 peak min
+
+# filename not really setup
+dataSet = "TES _DATA_NOV_6th/2018.11.06_23.59.20_1"
+#zero_level = 8000
+photon_ranges = [150, 350] # 1peak min, 2 peak min ??? not sure about the 150
