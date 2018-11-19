@@ -6,9 +6,12 @@ from scipy.signal import find_peaks
 
 
 # filename
-dataSet = "2018.10.29_18.57.37_1"
-zero_level = 7980
-photon_ranges = [60, 170] # 2peak min, 3 peak min
+dataSet = "Nov 18th/2018.11.18_16.11.12_1"
+
+filter_single_photon_level = 90
+opo_single_photon_level = 90
+
+photon_ranges = [300, 500] # 2peak min, 3 peak min
 
 matA = scipy.io.loadmat('./data/'+dataSet+'.A.mat')
 matB = scipy.io.loadmat('./data/'+dataSet+'.B.mat')
@@ -17,17 +20,21 @@ matB = scipy.io.loadmat('./data/'+dataSet+'.B.mat')
 x1 = matB['T1'][0,:]
 y1 = matB['Y1'][0,:]
 
-yt_filter = np.clip(y1, a_min=zero_level,a_max=None)
-yt_filter -= zero_level
+
+# yt_filter = np.clip(y1, a_min=filter_single_photon_level,a_max=None)
+# yt_filter -= filter_single_photon_level
+yt_filter = y1.astype(float)
+yt_filter -= np.mean(y1)
 #decrese everything by noise threshold, clip to 0
 
 #find peaks in filter cavity
-filter_peaks, _ = find_peaks(yt_filter, height=0,distance=15) #peaks are the x indices
+filter_peaks, _ = find_peaks(yt_filter, height=filter_single_photon_level,distance=15) #peaks are the x indices
 
-# plt.figure()
-# # plot graph with detected peaks over it
-# plt.plot(x1,yt)
-# plt.plot(x1[filter_peaks], yt[filter_peaks], "x")
+plt.figure()
+# plot graph with detected peaks over it
+plt.plot(x1,yt_filter)
+plt.plot(x1[filter_peaks],yt_filter[filter_peaks], "x")
+plt.show()
 
 #formatting
 # plt.xticks(rotation='vertical')
@@ -56,10 +63,12 @@ filter_peaks = single_peaks
 x2 = matA['T1'][0,:]
 y2 = matA['Y1'][0,:]
 
-yt_opo = np.clip(y2, a_min=zero_level,a_max=None)
-yt_opo -= zero_level
+# yt_opo = np.clip(y2, a_min=opo_single_photon_level,a_max=None)
+# yt_opo -= opo_single_photon_level
+yt_opo = y2.astype(float)
+yt_opo -= np.mean(y2)
 
-opo_peaks, _ = find_peaks(yt_opo, height=0,distance=15) #peaks are the x indices
+opo_peaks, _ = find_peaks(yt_opo, height=opo_single_photon_level,distance=15) #peaks are the x indices
 
 #would want to use a set data structure for B for faster run-time
 def peakInRange(peakI, peaksA,rng):
@@ -77,7 +86,10 @@ def findRatioInRange(rng,filter_peaks, opo_peaks):
 
 #heralding ratios for different windows
 ratios = []
-for i in range (0,20):
+peak_width = 50
+for i in range (0,int(peak_width/2)):
     ratios.append(findRatioInRange(i, filter_peaks, opo_peaks))
-    print("window: "+ str(i), " ratio: " + str(ratios[i]))
+    print("peak width: "+ str(i*2), " ratio: " + str(ratios[i]))
 
+plt.plot(ratios)
+plt.show()

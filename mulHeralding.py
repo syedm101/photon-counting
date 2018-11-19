@@ -7,7 +7,8 @@ from scipy.signal import find_peaks
 
 # filename  
 dataSet = "2018.10.29_18.57.37_1"
-zero_level = 8050
+filter_single_photon_level = 8146
+opo_single_photon_prominence = 100
 photon_ranges = [170, 170] # 2peak min, 3 peak min
 
 matA = scipy.io.loadmat('./data/'+dataSet+'.A.mat')
@@ -41,30 +42,26 @@ print(len(x2))
 # plt.show(block=True)
 
 #subtract out the zero level
-yt_filter = y1.astype(float)
-yt_filter -= np.mean(yt_filter)
+yt_filter = np.clip(y1, a_min=filter_single_photon_level,a_max=None)
+yt_filter -= filter_single_photon_level
 
 plt.figure()
-plt.title("Raw zeroed data")
+plt.title("Raw clipped filter data")
 plt.plot(x1,yt_filter)
 plt.show(block=True)
 
+#zero the opo data
 
+yt_opo = y2.astype(float)
+yt_opo -= np.mean(y2)
 
-
-#do the same for the OPO channel
-
-
-yt_opo = np.clip(y2, a_min=zero_level,a_max=None)
-yt_opo -= zero_level
-
-opo_peaks , _ = find_peaks(yt_opo, height=125,distance=15) #peaks are the x indices
-print("opo peak#: ", len(opo_peaks))
+filter_peaks , _ = find_peaks(yt_filter, height=0,distance=15) #peaks are the x indices
+print("filter peak#: ", len(filter_peaks))
 
 
 mulChannel = yt_filter * yt_opo
 plt.plot(x1,mulChannel)
-# plt.show(block=True)
+plt.show(block=True)
 
 mul_peaks, _ = find_peaks(mulChannel, height=10000,distance=15) #peaks are the x indices
 

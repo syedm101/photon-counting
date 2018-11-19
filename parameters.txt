@@ -7,3 +7,22 @@ photon_ranges = [170, 170] # 2peak min, 3 peak min
 dataSet = "TES _DATA_NOV_6th/2018.11.06_23.59.20_1"
 #zero_level = 8000
 photon_ranges = [150, 350] # 1peak min, 2 peak min ??? not sure about the 150
+
+
+
+
+dataSet = "2017.10.18_16.58.07_1"
+means:
+7942
+7959
+
+filter:185
+opo:200
+at peak width of 50 is 70%
+
+
+dataSet = "Nov 18th/2018.11.18_16.11.35_1"
+filter_single_photon_level = 8146
+opo_single_photon_level = 8160
+
+mean is 8060

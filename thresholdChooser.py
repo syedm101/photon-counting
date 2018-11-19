@@ -2,11 +2,11 @@ import scipy.io
 import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib
-from scipy.signal import find_peaks
+from scipy.signal import find_peaks, correlate
 
 
 # filename  
-dataSet = "TES _DATA_NOV_6th/2018.11.06_23.59.20_1"
+dataSet = "Nov 18th/2018.11.18_20.46.55_1"
 
 matA = scipy.io.loadmat('./data/'+dataSet+'.A.mat')
 matB = scipy.io.loadmat('./data/'+dataSet+'.B.mat')
@@ -20,7 +20,9 @@ yo = matA['Y1'][0,:]
 
 #subtract out the zero level
 yt_filter = yf.astype(float)
-yt_filter -= np.mean(yt_filter)
+filter_mean = np.mean(yt_filter)
+yt_filter -= filter_mean
+print("filter mean is: " + str(filter_mean))
 
 plt.figure()
 plt.title("Centered Raw Filter Data")
@@ -28,12 +30,15 @@ plt.plot(yt_filter)
 plt.show()
 
 yt_opo = yo.astype(float)
-yt_opo -= np.mean(yt_opo)
+opo_mean = np.mean(yt_opo)
+yt_opo -= opo_mean
+print("opo mean: " + str(opo_mean))
 
 plt.figure()
 plt.title("Centered Raw OPO Data")
 plt.plot(yt_opo)
 plt.show()
+
 
 def peakAnalyzer(x,y):
     height = int(input())

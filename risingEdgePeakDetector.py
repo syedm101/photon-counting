@@ -23,6 +23,7 @@ y1 = matB['Y1'][0,:]
 yt_filter = y1.astype(int)
 yt_filter -= zero_level
 
+#need to customize this probably
 scipy.signal.savgol_filter(yt_filter, 4, 3)
 
 
