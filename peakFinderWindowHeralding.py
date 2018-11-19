@@ -12,6 +12,7 @@ filter_single_photon_level = 90
 opo_single_photon_level = 90
 
 photon_ranges = [300, 500] # 2peak min, 3 peak min
+opo_photon_ranges = [160,300]
 
 matA = scipy.io.loadmat('./data/'+dataSet+'.A.mat')
 matB = scipy.io.loadmat('./data/'+dataSet+'.B.mat')
@@ -70,6 +71,19 @@ yt_opo -= np.mean(y2)
 
 opo_peaks, _ = find_peaks(yt_opo, height=opo_single_photon_level,distance=15) #peaks are the x indices
 
+opo_single_peaks = []
+opo_double_peaks = []
+opo_triple_peaks = []
+for i in range(len(opo_peaks)):
+    if yt_opo[opo_peaks[i]] < opo_photon_ranges[0]:
+        opo_single_peaks.append(opo_peaks[i])
+    elif yt_opo[opo_peaks[i]] < opo_photon_ranges[1]:
+        opo_double_peaks.append(opo_peaks[i])
+    else:
+        opo_triple_peaks.append(opo_peaks[i])
+
+
+
 #would want to use a set data structure for B for faster run-time
 def peakInRange(peakI, peaksA,rng):
     for i in range(-rng,rng+1):
@@ -88,7 +102,7 @@ def findRatioInRange(rng,filter_peaks, opo_peaks):
 ratios = []
 peak_width = 50
 for i in range (0,int(peak_width/2)):
-    ratios.append(findRatioInRange(i, filter_peaks, opo_peaks))
+    ratios.append(findRatioInRange(i, filter_peaks, opo_single_peaks))
     print("peak width: "+ str(i*2), " ratio: " + str(ratios[i]))
 
 plt.plot(ratios)
