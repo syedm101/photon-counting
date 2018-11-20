@@ -29,7 +29,7 @@ yt_filter -= np.mean(y1)
 #decrese everything by noise threshold, clip to 0
 
 #find peaks in filter cavity
-filter_peaks, _ = find_peaks(yt_filter, height=filter_single_photon_level,distance=15) #peaks are the x indices
+filter_peaks, _ = find_peaks(yt_filter, height=filter_single_photon_level,distance=10,prominence=50) #peaks are the x indices
 
 plt.figure()
 # plot graph with detected peaks over it
@@ -57,6 +57,10 @@ for i in range(len(filter_peaks)):
     else:
         triple_peaks.append(filter_peaks[i])
 
+single_peaks = np.asarray(single_peaks)
+double_peaks = np.asarray(double_peaks)
+triple_peaks = np.asarray(triple_peaks)
+
 #only use single photon peaks for heralding calculation
 filter_peaks = single_peaks
 
@@ -69,7 +73,7 @@ y2 = matA['Y1'][0,:]
 yt_opo = y2.astype(float)
 yt_opo -= np.mean(y2)
 
-opo_peaks, _ = find_peaks(yt_opo, height=opo_single_photon_level,distance=15) #peaks are the x indices
+opo_peaks, _ = find_peaks(yt_opo, height=opo_single_photon_level,distance=10,prominence=50) #peaks are the x indices
 
 opo_single_peaks = []
 opo_double_peaks = []
@@ -82,7 +86,9 @@ for i in range(len(opo_peaks)):
     else:
         opo_triple_peaks.append(opo_peaks[i])
 
-
+opo_single_peaks = np.asarray(opo_single_peaks)
+opo_double_peaks = np.asarray(opo_double_peaks)
+opo_triple_peaks = np.asarray(opo_triple_peaks)
 
 #would want to use a set data structure for B for faster run-time
 def peakInRange(peakI, peaksA,rng):

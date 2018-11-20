@@ -26,3 +26,8 @@ filter_single_photon_level = 8146
 opo_single_photon_level = 8160
 
 mean is 8060
+
+
+dataSet = "Nov 18th/2018.11.18_16.11.12_1"
+filter_single_photon_level = 90
+opo_single_photon_level = 90
