@@ -6,13 +6,13 @@ from scipy.signal import find_peaks
 
 
 # filename
-dataSet = "Nov 18th/2018.11.18_16.11.12_1"
+dataSet = "Nov29/Nov_21_Data_Phase_6/Displacement_ND_7.7_both/2018.11.22_04.57.37_1"
 
-filter_single_photon_level = 90
-opo_single_photon_level = 90
+filter_single_photon_level = 86
+opo_single_photon_level = 86
 
-photon_ranges = [300, 500] # 2peak min, 3 peak min
-opo_photon_ranges = [160,300]
+photon_ranges = [150, 250] # 2peak min, 3 peak min
+opo_photon_ranges = [180,240] #,310 for triple
 
 matA = scipy.io.loadmat('./data/'+dataSet+'.A.mat')
 matB = scipy.io.loadmat('./data/'+dataSet+'.B.mat')
@@ -31,11 +31,11 @@ yt_filter -= np.mean(y1)
 #find peaks in filter cavity
 filter_peaks, _ = find_peaks(yt_filter, height=filter_single_photon_level,distance=10,prominence=50) #peaks are the x indices
 
-plt.figure()
-# plot graph with detected peaks over it
-plt.plot(x1,yt_filter)
-plt.plot(x1[filter_peaks],yt_filter[filter_peaks], "x")
-plt.show()
+# plt.figure()
+# # plot graph with detected peaks over it
+# plt.plot(x1,yt_filter)
+# plt.plot(x1[filter_peaks],yt_filter[filter_peaks], "x")
+# plt.show()
 
 #formatting
 # plt.xticks(rotation='vertical')
@@ -91,25 +91,53 @@ opo_double_peaks = np.asarray(opo_double_peaks)
 opo_triple_peaks = np.asarray(opo_triple_peaks)
 
 #would want to use a set data structure for B for faster run-time
+#returns -1 if not found, else the index
 def peakInRange(peakI, peaksA,rng):
     for i in range(-rng,rng+1):
         if (peakI+i in peaksA):
-            return True
-    return False
+            return peakI+i
+    return -1
         
+#gets the opo photon number as well
 def findRatioInRange(rng,filter_peaks, opo_peaks):
-    coincidences= 0
+    zero_coincidences = 0
+    single_coincidences = 0
+    double_coincidences= 0
+    triple_coincidences= 0
     for peakI in filter_peaks:
-        if peakInRange(peakI,opo_peaks,rng):
-            coincidences+=1
-    return coincidences/len(filter_peaks)
+        peakIndex = peakInRange(peakI,opo_peaks,rng)
+        if peakIndex != -1:
+            if peakIndex in opo_single_peaks:
+                single_coincidences+=1
+            elif peakIndex in opo_double_peaks:
+                double_coincidences+=1
+            elif peakIndex in opo_triple_peaks: 
+                triple_coincidences+=1
+        else:
+            zero_coincidences+=1
+    print("0 photon opo coincidence: " + str(zero_coincidences))
+    print("1 photon opo coincidence: " + str(single_coincidences))
+    print("2 photon opo coincidence: " + str(double_coincidences))
+    print("3 photon opo coincidence: " + str(triple_coincidences))
+    print("wigner: ",(zero_coincidences-single_coincidences+double_coincidences-triple_coincidences)/len(filter_peaks)/3.1415926)
+
+    return single_coincidences/len(filter_peaks)
 
 #heralding ratios for different windows
 ratios = []
 peak_width = 50
 for i in range (0,int(peak_width/2)):
-    ratios.append(findRatioInRange(i, filter_peaks, opo_single_peaks))
+    ratios.append(findRatioInRange(i, filter_peaks, opo_peaks))
     print("peak width: "+ str(i*2), " ratio: " + str(ratios[i]))
 
+print("Single photon #: " + str(len(single_peaks)))
+print("Double photon #: " + str(len(double_peaks)))
+print("Triple photon #: " + str(len(triple_peaks)))
+
+# print("opo Single photon #: " + str(single_coincidences))
+# print("opo Double photon #: " + str(double_coincidences))
+# print("opo Triple photon #: " + str(triple_coincidences))
+
 plt.plot(ratios)
+plt.title("peak width/2 by ratio")
 plt.show()

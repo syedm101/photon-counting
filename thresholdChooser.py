@@ -6,7 +6,7 @@ from scipy.signal import find_peaks, correlate
 
 
 # filename  
-dataSet = "TES _DATA_NOV_6th/2018.11.06_23.59.20_1"
+dataSet = "Nov29/Nov_21_Data_Phase_6/Displacement_ND_7.7_both/2018.11.22_04.57.37_1"
 
 matA = scipy.io.loadmat('./data/'+dataSet+'.A.mat')
 matB = scipy.io.loadmat('./data/'+dataSet+'.B.mat')
