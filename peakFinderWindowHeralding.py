@@ -21,30 +21,12 @@ matB = scipy.io.loadmat('./data/'+dataSet+'.B.mat')
 x1 = matB['T1'][0,:]
 y1 = matB['Y1'][0,:]
 
-
-# yt_filter = np.clip(y1, a_min=filter_single_photon_level,a_max=None)
-# yt_filter -= filter_single_photon_level
 yt_filter = y1.astype(float)
 yt_filter -= np.mean(y1)
-#decrese everything by noise threshold, clip to 0
+#decrese everything by zero level
 
 #find peaks in filter cavity
 filter_peaks, _ = find_peaks(yt_filter, height=filter_single_photon_level,distance=10,prominence=50) #peaks are the x indices
-
-# plt.figure()
-# # plot graph with detected peaks over it
-# plt.plot(x1,yt_filter)
-# plt.plot(x1[filter_peaks],yt_filter[filter_peaks], "x")
-# plt.show()
-
-#formatting
-# plt.xticks(rotation='vertical')
-# plt.xlabel("Time (s)")
-# plt.show(block=True)
-
-# plt.figure()
-# plt.hist(yt[filter_peaks], bins=1500, log=False,histtype='step')
-# plt.show(block=True)
 
 single_peaks = []
 double_peaks = []
@@ -56,7 +38,7 @@ for i in range(len(filter_peaks)):
         double_peaks.append(filter_peaks[i])
     else:
         triple_peaks.append(filter_peaks[i])
-
+#convert to numpy array
 single_peaks = np.asarray(single_peaks)
 double_peaks = np.asarray(double_peaks)
 triple_peaks = np.asarray(triple_peaks)
@@ -67,14 +49,12 @@ filter_peaks = single_peaks
 #do the same for the OPO channel
 x2 = matA['T1'][0,:]
 y2 = matA['Y1'][0,:]
-
-# yt_opo = np.clip(y2, a_min=opo_single_photon_level,a_max=None)
-# yt_opo -= opo_single_photon_level
 yt_opo = y2.astype(float)
 yt_opo -= np.mean(y2)
 
 opo_peaks, _ = find_peaks(yt_opo, height=opo_single_photon_level,distance=10,prominence=50) #peaks are the x indices
 
+#classify peaks into single, double, or triple
 opo_single_peaks = []
 opo_double_peaks = []
 opo_triple_peaks = []
@@ -90,7 +70,6 @@ opo_single_peaks = np.asarray(opo_single_peaks)
 opo_double_peaks = np.asarray(opo_double_peaks)
 opo_triple_peaks = np.asarray(opo_triple_peaks)
 
-#would want to use a set data structure for B for faster run-time
 #returns -1 if not found, else the index
 def peakInRange(peakI, peaksA,rng):
     for i in range(-rng,rng+1):
@@ -123,9 +102,9 @@ def findRatioInRange(rng,filter_peaks, opo_peaks):
 
     return single_coincidences/len(filter_peaks)
 
-#heralding ratios for different windows
+#heralding ratios for different windows/peak widths
 ratios = []
-peak_width = 50
+peak_width = 20
 for i in range (0,int(peak_width/2)):
     ratios.append(findRatioInRange(i, filter_peaks, opo_peaks))
     print("peak width: "+ str(i*2), " ratio: " + str(ratios[i]))
@@ -139,5 +118,7 @@ print("Triple photon #: " + str(len(triple_peaks)))
 # print("opo Triple photon #: " + str(triple_coincidences))
 
 plt.plot(ratios)
-plt.title("peak width/2 by ratio")
+plt.title("Heralding Ratio with Different Window Sizes")
+plt.xlabel("peak width/2")
+plt.ylabel("Heralding Ratio")
 plt.show()

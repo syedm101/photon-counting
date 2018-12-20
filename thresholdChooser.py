@@ -6,17 +6,15 @@ from scipy.signal import find_peaks, correlate
 
 
 # filename  
-dataSet = "Nov29/Nov_21_Data_Phase_6/Displacement_ND_7.7_both/2018.11.22_04.57.37_1"
-
+dataSet = "Nov29/Nov_21_Data_Phase_6/Displacement_ND_7.0_both/2018.11.22_04.50.04_1"
 matA = scipy.io.loadmat('./data/'+dataSet+'.A.mat')
 matB = scipy.io.loadmat('./data/'+dataSet+'.B.mat')
 
 xf = matB['T1'][0,:]
 yf = matB['Y1'][0,:]
 
-xo = matA['T1'][0,:]
+xo = matA['T1'][0,:]    
 yo = matA['Y1'][0,:]
-
 
 #subtract out the zero level
 yt_filter = yf.astype(float)
@@ -43,7 +41,7 @@ plt.show()
 def peakAnalyzer(x,y):
     height = int(input())
     #find peaks in filter cavity
-    peaks, _ = find_peaks(y, height=height,distance=15) #peaks are the x indices
+    peaks, _ = find_peaks(y, height=height,distance=7, prominence=60) #peaks are the x indices
     print("peak#: ", len(peaks))
 
     plt.figure()

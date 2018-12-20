@@ -5,14 +5,14 @@ import numpy as np
 import matplotlib
 from scipy.signal import find_peaks
 
-peak_width = 12
+peak_width = 10
 
-folder = "./data/Nov29/Nov_21_Data_Phase_8/ND_7.7_Both_displacement/"
+folder = "./data/Nov29/Nov_21_Data_Phase_6/Displacement_ND_7.7_both/"
 filter_single_photon_level = 86
 opo_single_photon_level = 86
 
 photon_ranges = [150, 210] # 2peak min, 3 peak min
-opo_photon_ranges = [180,240] #,310 for triple86
+opo_photon_ranges = [180,240] #,310 for triple
 
 def windowWigner(matA, matB, peak_width):
     # This is the filtering Channel
@@ -24,7 +24,7 @@ def windowWigner(matA, matB, peak_width):
     #decrese everything by noise threshold, clip to 0
 
     #find peaks in filter cavity, seperated by 10
-    filter_peaks, _ = find_peaks(yt_filter, height=filter_single_photon_level,distance=10,prominence=50) #peaks are the x indices
+    filter_peaks, _ = find_peaks(yt_filter, height=filter_single_photon_level,distance=7,prominence=75) #peaks are the x indices
 
     single_peaks = []
     double_peaks = []
@@ -41,6 +41,10 @@ def windowWigner(matA, matB, peak_width):
     double_peaks = np.asarray(double_peaks)
     triple_peaks = np.asarray(triple_peaks)
 
+    print("filter single photon prob: " + str(len(single_peaks)/len(filter_peaks)))
+    print("filter double photon prob: " + str(len(double_peaks)/len(filter_peaks)))
+    print("filter triple photon prob: " + str(len(triple_peaks)/len(filter_peaks)))
+
     #only use single photon peaks for heralding calculation
     filter_peaks = single_peaks
 
@@ -50,7 +54,7 @@ def windowWigner(matA, matB, peak_width):
     yt_opo = y2.astype(float)
     yt_opo -= np.mean(y2)
 
-    opo_peaks, _ = find_peaks(yt_opo, height=opo_single_photon_level,distance=10,prominence=50) #peaks are the x indices
+    opo_peaks, _ = find_peaks(yt_opo, height=opo_single_photon_level,distance=7,prominence=60) #peaks are the x indices
 
     opo_single_peaks = []
     opo_double_peaks = []
@@ -66,6 +70,10 @@ def windowWigner(matA, matB, peak_width):
     opo_single_peaks = np.asarray(opo_single_peaks)
     opo_double_peaks = np.asarray(opo_double_peaks)
     opo_triple_peaks = np.asarray(opo_triple_peaks)
+
+    print("opo single photon prob: " + str(len(opo_single_peaks)/len(opo_peaks)))
+    print("opo double photon prob: " + str(len(opo_double_peaks)/len(opo_peaks)))
+    print("opo triple photon prob: " + str(len(opo_triple_peaks)/len(opo_peaks)))
 
     return findRatioInRange(int(peak_width/2), filter_peaks, opo_peaks, opo_single_peaks, opo_double_peaks, opo_triple_peaks)
 
@@ -96,10 +104,10 @@ def findRatioInRange(rng,filter_peaks, opo_peaks, opo_single_peaks, opo_double_p
                 triple_coincidences+=1
         else:
             zero_coincidences+=1
-    print("0 photon opo coincidence: " + str(zero_coincidences))
-    print("1 photon opo coincidence: " + str(single_coincidences))
-    print("2 photon opo coincidence: " + str(double_coincidences))
-    print("3 photon opo coincidence: " + str(triple_coincidences))
+    print("0 photon opo coincidence: " + str(zero_coincidences) + " " + str(zero_coincidences/len(filter_peaks)))
+    print("1 photon opo coincidence: " + str(single_coincidences) + " " + str(single_coincidences/len(filter_peaks)))
+    print("2 photon opo coincidence: " + str(double_coincidences) + " " + str(double_coincidences/len(filter_peaks)))
+    print("3 photon opo coincidence: " + str(triple_coincidences) + " " + str(triple_coincidences/len(filter_peaks)))
     wigner = (zero_coincidences-single_coincidences+double_coincidences-triple_coincidences)/len(filter_peaks)/3.1415926
 
     return wigner, single_coincidences/len(filter_peaks)
