@@ -7,5 +7,6 @@ The python notebooks look at different cases of specific data sets for analysis.
 Raj's comment.
 Look great, a few more things to add on, 
 a). ND 7.7 is still low displacement, It's good to have the Wigner function for higher displacements as well, which is ND7.0 folder. 
-b). Bar plots of probalities for both channels as we discussed, in particular OPO for higher displacements. 
+b). Bar plots of probalities for both channels as we discussed, in particular OPO for higher displacements.  
+c). In ND 7.7 folder, first file is not actually the zero displacement file. For Zero displacement value of Wigner function, just use the heralding dataset because displacement is completely blocked. 
 
