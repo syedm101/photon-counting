@@ -5,14 +5,15 @@ import numpy as np
 import matplotlib
 from scipy.signal import find_peaks
 
-peak_width = 10
+peak_width = 6
 
-folder = "./data/Nov29/Nov_21_Data_Phase_6/Displacement_ND_7.7_both/"
+folder = "./data/Nov29/Nov_21_Data_Phase_6/Displacement_ND_7.0_both/"
 filter_single_photon_level = 86
-opo_single_photon_level = 86
+opo_single_photon_level = 40
 
-photon_ranges = [150, 210] # 2peak min, 3 peak min
-opo_photon_ranges = [180,240] #,310 for triple
+photon_ranges = [150, 250] # 2peak min, 3 peak min
+opo_photon_ranges = [145,230] #,310 for triple
+
 
 def windowWigner(matA, matB, peak_width):
     # This is the filtering Channel
